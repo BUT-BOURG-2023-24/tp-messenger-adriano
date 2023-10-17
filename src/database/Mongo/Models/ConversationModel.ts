@@ -6,7 +6,22 @@ export interface IConversation extends Document {
 }
 
 const conversationSchema: Schema<IConversation> = new Schema<IConversation>({
-	//A COMPLETER
+	participants: [{
+        type: Schema.ObjectId,
+        ref: "User"
+    }],
+    messages: [{
+        type: Schema.ObjectId,
+        ref: "Message"
+    }],
+    title: {
+        type: String,
+        required: true
+    },
+    lastUpdate: {
+        type: Date,
+        required: true
+    }
 });
 
 const ConversationModel = mongoose.model<IConversation>("Conversation", conversationSchema);
