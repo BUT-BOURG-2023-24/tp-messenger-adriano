@@ -1,29 +1,45 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Document, Schema, Types } from 'mongoose';
 import { MongooseID } from "../../../types";
 
+// Interface pour définir la structure des données d'une conversation
 export interface IConversation extends Document {
-	//A COMPLETER
+  participants: Types.ObjectId[];
+  messages: Types.ObjectId[];
+  title: string;
+  lastUpdate: Date;
+  seen: Record<string, Types.ObjectId>;
 }
 
-const conversationSchema: Schema<IConversation> = new Schema<IConversation>({
-	participants: [{
-        type: Schema.ObjectId,
-        ref: "User"
-    }],
-    messages: [{
-        type: Schema.ObjectId,
-        ref: "Message"
-    }],
-    title: {
-        type: String,
-        required: true
+// Définition du schéma MongoDB pour l'entité "Conversation"
+const conversationSchema = new Schema<IConversation>({
+  participants: [
+    {
+      type: Schema.ObjectId,
+      ref: 'User', // Référence à la collection "User"
     },
-    lastUpdate: {
-        type: Date,
-        required: true
-    }
+  ],
+  messages: [
+    {
+      type: Schema.ObjectId,
+      ref: 'Message', // Référence à la collection "Message"
+    },
+  ],
+  title: {
+    type: String,
+    required: true,
+  },
+  lastUpdate: {
+    type: Date,
+    default: Date.now,
+  },
+  seen: {
+    type: Map,
+    of: Types.ObjectId,
+    default: {},
+  },
 });
 
-const ConversationModel = mongoose.model<IConversation>("Conversation", conversationSchema);
+// Création du modèle "Conversation" à partir du schéma
+const Conversation = mongoose.model<IConversation>('Conversation', conversationSchema);
 
-export default ConversationModel;
+export default Conversation;

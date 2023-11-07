@@ -1,47 +1,59 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Document, Schema, Types } from 'mongoose';
 import { MongooseID } from "../../../types";
 
+// Interface pour définir la structure des données d'un message
 export interface IMessage extends Document {
-	//A COMPLETER
+  conversationId: Types.ObjectId;
+  from: Types.ObjectId;
+  content: string;
+  postedAt: Date;
+  replyTo?: Types.ObjectId | null;
+  edited: boolean;
+  deleted: boolean;
+  reactions: Record<string, number>;
 }
 
-const MessageSchema: Schema<IMessage> = new Schema<IMessage>({
-	conversationId: {
-        type: Schema.ObjectId,
-        ref: "Conversation",
-        required: true,
-        unique: true
-    },
-    from: {
-        type: Schema.ObjectId,
-        ref: "User",
-        required: true  
-    },
-    content: {
-        type: String,
-        required: true
-    }
-    ,
-    postedAt: {
-        type: Date,
-        required: true
-    },
-    replyTo: {
-        type: Schema.ObjectId,
-        ref:"Message",
-        required: false,
-        
-    },
-    edited: {
-        type: Boolean,
-        required: true
-    },
-    deleted: {
-        type: Boolean,
-        required: true
-    }
+// Définition du schéma MongoDB pour l'entité "Message"
+const messageSchema = new Schema<IMessage>({
+  conversationId: {
+    type: Schema.ObjectId,
+    required: true,
+    ref: 'Conversation', // Référence à la collection "Conversation"
+  },
+  from: {
+    type: Schema.ObjectId,
+    required: true,
+    ref: 'User', // Référence à la collection "User"
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  postedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  replyTo: {
+    type: Types.ObjectId,
+    ref: 'Message', // Référence à la collection "Message"
+    default: null,
+  },
+  edited: {
+    type: Boolean,
+    default: false,
+  },
+  deleted: {
+    type: Boolean,
+    default: false,
+  },
+  reactions: {
+    type: Map,
+    of: Number,
+    default: {},
+  },
 });
 
-const MessageModel = mongoose.model<IMessage>("Message", MessageSchema);
+// Création du modèle "Message" à partir du schéma
+const Message = mongoose.model<IMessage>('Message', messageSchema);
 
-export { MessageModel, MessageSchema };
+export default Message;
