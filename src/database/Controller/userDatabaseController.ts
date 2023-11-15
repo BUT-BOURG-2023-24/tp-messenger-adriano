@@ -4,6 +4,7 @@ const User = require('../Mongo/Models/userModel');
   // Fonction pour créer un utilisateur
   async function createUser(username: any, password: any, profilePicId: any) {
     try {
+      
       const user = new User({
         username,
         password, // Assurez-vous de stocker le mot de passe de manière sécurisée, par exemple, en utilisant le hachage bcrypt
