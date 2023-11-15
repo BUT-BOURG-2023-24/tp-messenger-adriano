@@ -6,7 +6,6 @@ const UserDatabaseController = require('../../database/Controller/userDatabaseCo
 
 async function createUser(req: Request, res: Response) {
   const { username, password, profilePicId } = req.body;
-
   try {
     const existingUser = await UserDatabaseController.getUserByName(username);
     if (existingUser) {
@@ -45,4 +44,21 @@ async function login(req: Request, res: Response) {
   }
 };
 
-module.exports = { createUser, login };
+async function online(req: Request, res: Response) {
+  try {
+    const userIds = req.body.userIds;
+
+    if (!userIds || !Array.isArray(userIds)) {
+      return res.status(400).json({ error: 'IDs d\'utilisateurs manquants ou invalides dans le corps de la requête.' });
+    }
+
+    const onlineUsers = await UserDatabaseController.getUsersByIds(userIds);
+    return res.status(200).json({ users: onlineUsers });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+
+module.exports = { createUser, login, online };

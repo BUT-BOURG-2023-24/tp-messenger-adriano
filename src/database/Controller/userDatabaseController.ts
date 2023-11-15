@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 const User = require('../Mongo/Models/userModel');
 
   // Fonction pour créer un utilisateur
@@ -36,14 +37,15 @@ const User = require('../Mongo/Models/userModel');
   }
 
   // Fonction pour récupérer plusieurs utilisateurs par IDs
-  async function getUsersByIds(userIds: any) {
+  async function getUsersByIds(userIds: string[]) {
     try {
-      const users = await User.find({ _id: { $in: userIds } });
+      const users = await User.find({ _id: { $in: userIds.map((id) => new mongoose.Types.ObjectId(id)) } });
       return users;
     } catch (error) {
       throw new Error('Erreur lors de la récupération de plusieurs utilisateurs par IDs');
     }
   }
+  
 
   // Ajoutez d'autres fonctions nécessaires pour les opérations CRUD des utilisateurs
 
