@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 const Joi = require('joi');
-const MessageDatabaseController = require('../../database/Mongo/Models/messageDatabaseController');
+const MessageDatabaseController = require('../../database/Controller/messageDatabaseController');
 
 async function editMessage(req: Request, res: Response) {
     const { newMessageContent } = req.body;
