@@ -3,8 +3,8 @@ const messageRoutesController = require('./Controller/messageRoutesController');
 
 const messageRoutes = express.Router();
 
-messageRoutes.put('/:id', messageRoutesController.editMessage);
-messageRoutes.post('/:id/react', messageRoutesController.reactToMessage);
-messageRoutes.delete('/:id', messageRoutesController.deleteMessage);
+messageRoutes.put('/messages/:id', messageRoutesController.editMessage);
+messageRoutes.post('/messages/:id/react', messageRoutesController.reactToMessage);
+messageRoutes.delete('/messages/:id', messageRoutesController.deleteMessage);
 
 module.exports = messageRoutes;
