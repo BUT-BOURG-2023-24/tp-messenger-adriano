@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
+import bcrypt from 'bcrypt';
+import 'dotenv/config';
 const jwt = require('jsonwebtoken');
-const Joi = require('joi');
 const UserDatabaseController = require('../../database/Controller/userDatabaseController');
 
 
@@ -11,10 +12,10 @@ async function createUser(req: Request, res: Response) {
     if (existingUser) {
       return res.status(400).json({ error: 'Cet utilisateur existe déjà' });
     }
+    const hash: string = await bcrypt.hash(req.body.password, 5);
+    const newUser = await UserDatabaseController.createUser(username, hash, profilePicId);
 
-    const newUser = await UserDatabaseController.createUser(username, password, profilePicId);
-
-    const token = jwt.sign({ userId: newUser._id }, 'secret');
+    const token = jwt.sign({ userId: newUser._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
     res.status(200).json({ user: newUser, token, isNewUser: true });
   } catch (error) {
@@ -28,15 +29,16 @@ async function login(req: Request, res: Response) {
   try {
     const user = await UserDatabaseController.getUserByName(username);
     if (!user) {
-      return res.status(400).json({ error: 'Nom d\'utilisateur ou mot de passe incorrect' });
+      return res.status(400).json({ error: 'Nom d\'utilisateur incorrect' });
     }
 
-    // Assurez-vous d'utiliser un processus de hachage sécurisé, par exemple avec bcrypt
-    if (user.password !== password) {
-      return res.status(400).json({ error: 'Nom d\'utilisateur ou mot de passe incorrect' });
+
+    const pwdCorrect: boolean = await bcrypt.compare(req.body.password, user.password);
+    if (!pwdCorrect) {
+      return res.status(400).json({ error: 'Mot de passe incorrect' });
     }
 
-    const token = jwt.sign({ userId: user._id }, 'secret');
+    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
 
     res.status(200).json({ user, token, isNewUser: false });
   } catch (error) {
