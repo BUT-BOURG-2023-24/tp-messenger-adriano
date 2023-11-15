@@ -4,7 +4,7 @@ const Joi = require('joi');
 const UserDatabaseController = require('../../database/Controller/userDatabaseController');
 
 
-async function createUser(req: Request, res:Response) {
+async function createUser(req: Request, res: Response) {
   const { username, password, profilePicId } = req.body;
 
   try {
@@ -23,7 +23,7 @@ async function createUser(req: Request, res:Response) {
   }
 };
 
-async function login (req: Request, res:Response){
+async function login(req: Request, res: Response) {
   const { username, password } = req.body;
 
   try {
@@ -45,4 +45,4 @@ async function login (req: Request, res:Response){
   }
 };
 
-module.exports = {createUser,login};
+module.exports = { createUser, login };
