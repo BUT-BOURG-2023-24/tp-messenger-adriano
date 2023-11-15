@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { MongooseID } from "../../../types";
+const uniqueValidator = require('mongoose-unique-validator');
 
 // Interface pour définir la structure des données d'un utilisateur
 export interface IUser extends Document {
@@ -24,6 +25,8 @@ const userSchema = new Schema<IUser>({
     // Autres propriétés du schéma liées à profilePicId
   },
 });
+
+userSchema.plugin(uniqueValidator);
 
 // Création du modèle "User" à partir du schéma
 const User = mongoose.model<IUser>('User', userSchema);
